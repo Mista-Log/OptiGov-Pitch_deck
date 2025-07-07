@@ -3,9 +3,6 @@
   <head>
     <title>Pitch Deck</title>
     <meta charset="utf-8">
-  </head>
-  <body>
-
     <style type="text/css">
       body {
         background-color: #333;
@@ -38,7 +35,43 @@
       .examples a:hover {
         color: #fff;
       }
+      
+      /* Swipe Left Popup Styles */
+      .swipe-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        animation: floatLeft 2s infinite;
+      }
+      
+      .swipe-popup .arrow {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      
+      @keyframes floatLeft {
+        0% { transform: translate(-50%, -50%); }
+        50% { transform: translate(-60%, -50%); }
+        100% { transform: translate(-50%, -50%); }
+      }
     </style>
+  </head>
+  <body>
 
     <div class="examples">
       <div>
@@ -46,38 +79,41 @@
       </div>
     </div>
 
-    <div class="container" id="container">
-
+    <!-- Swipe Left Popup -->
+    <div class="swipe-popup">
+      <div class="arrow"></div>
+      <span>Swipe Left</span>
     </div>
 
+    <div class="container" id="container"></div>
+    
     <script src="js/jquery.min.js"></script>
     <script src="js/html2canvas.min.js"></script>
     <script src="js/three.min.js"></script>
     <script src="js/pdf.min.js"></script>
-
     <script src="js/3dflipbook.min.js"></script>
+    
     <script type="text/javascript">
+      // Hide popup after 5 seconds or when user interacts
+      setTimeout(function() {
+        document.querySelector('.swipe-popup').style.opacity = '0';
+        setTimeout(function() {
+          document.querySelector('.swipe-popup').style.display = 'none';
+        }, 500);
+      }, 5000);
+      
+      // Also hide on any touch or click
+      document.addEventListener('touchstart', hidePopup);
+      document.addEventListener('click', hidePopup);
+      
+      function hidePopup() {
+        document.querySelector('.swipe-popup').style.opacity = '0';
+        setTimeout(function() {
+          document.querySelector('.swipe-popup').style.display = 'none';
+        }, 500);
+      }
 
-      // // Sample 0 {
-      // $('#container').FlipBook({
-      //   pdf: 'books/pdf/FoxitPdfSdk.pdf',
-      //   template: {
-      //     html: 'templates/default-book-view.html',
-      //     styles: [
-      //       'css/short-black-book-view.css'
-      //     ],
-      //     links: [
-      //       {
-      //         rel: 'stylesheet',
-      //         href: 'css/font-awesome.min.css'
-      //       }
-      //     ],
-      //     script: 'js/default-book-view.js'
-      //   }
-      // });
-      // // }
-
-      // Sample 1 CSS Layer {
+      // Your existing FlipBook code...
       function theKingIsBlackPageCallback(n) {
         return {
           type: 'image',
@@ -90,9 +126,8 @@
         pageCallback: theKingIsBlackPageCallback,
         pages: 40,
         propertiesCallback: function(props) {
-          props.cssLayersLoader = function(n, clb) {// n - page number
+          props.cssLayersLoader = function(n, clb) {
             clb([{
-
               js: function (jContainer) {
                 console.log(jContainer);
                 return {
@@ -126,86 +161,6 @@
           }
         }
       });
-      // }
-
-      // // Sample 2 {
-      // $('#container').FlipBook({
-      //   pdf: 'books/pdf/CondoLiving.pdf',
-      //   pages: 5,
-      //   template: {
-      //     html: 'templates/default-book-view.html',
-      //     styles: [
-      //       'css/white-book-view.css'
-      //     ],
-      //     links: [
-      //       {
-      //         rel: 'stylesheet',
-      //         href: 'css/font-awesome.min.css'
-      //       }
-      //     ],
-      //     script: 'js/default-book-view.js'
-      //   }
-      // });
-      // // }
-
-      // // Sample 3 {
-      // $('#container').FlipBook({
-      //   pdf: 'books/pdf/TheThreeMusketeers.pdf',
-      //   propertiesCallback: function(props) {
-      //     props.page.depth /= 2.5;
-      //     props.cover.padding = 0.002;
-      //     return props;
-      //   },
-      //   template: {
-      //     html: 'templates/default-book-view.html',
-      //     styles: [
-      //       'css/short-black-book-view.css'
-      //     ],
-      //     links: [
-      //       {
-      //         rel: 'stylesheet',
-      //         href: 'css/font-awesome.min.css'
-      //       }
-      //     ],
-      //     script: 'js/default-book-view.js'
-      //   }
-      // });
-      // // }
-
-      // // Sample 4 {
-      // function preview(n) {
-      //   return {
-      //     type: 'html',
-      //     src: 'books/html/preview/'+(n%3+1)+'.html',
-      //     interactive: true
-      //   };
-      // }
-      //
-      // $('#container').FlipBook({
-      //   pageCallback: preview,
-      //   pages: 20,
-      //   propertiesCallback: function(props) {
-      //     props.sheet.color = 0x008080;
-      //     props.cover.padding = 0.002;
-      //     return props;
-      //   },
-      //   template: {
-      //     html: 'templates/default-book-view.html',
-      //     styles: [
-      //       'css/black-book-view.css'
-      //     ],
-      //     links: [
-      //       {
-      //         rel: 'stylesheet',
-      //         href: 'css/font-awesome.min.css'
-      //       }
-      //     ],
-      //     script: 'js/default-book-view.js'
-      //   }
-      // });
-      // // }
-
     </script>
-
   </body>
 </html>
